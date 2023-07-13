@@ -1,5 +1,7 @@
 package de.neuefische;
 
+import java.util.Arrays;
+
 public class StudentDB {
 
     private Student[] students;
@@ -12,5 +14,11 @@ public class StudentDB {
         return students;
     }
 
-    
+    @Override
+    public String
+    toString() {
+        return "StudentDB{" +
+                "students=" + Arrays.toString(students) +
+                '}';
+    }
 }
