@@ -1,34 +1,32 @@
 package de.neuefische;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class StudentDB {
 
-    private List<Student> students;
+    private Map<Integer, Student> students;
 
-    public StudentDB(List<Student> students) {
+    public StudentDB(Map<Integer, Student> students) {
         this.students = students;
     }
 
-    public List<Student> getAllStudents() {
+    public Map<Integer, Student> getAllStudents() {
         return students;
     }
 
-    public boolean addStudent(Student student){
-        return students.add(student);
+    public Student addStudent(Student student) throws IdAlreadyExistsException {
+        if (students.containsKey(student.getId())){
+            throw new IdAlreadyExistsException("Student with ID: " + student.getId() + " already exists");
+        }
+        students.put(student.getId(),student);
+        return students.get(student.getId());
     }
 
-    public void removeStudentWithId(int id){
-        for (Student s:students) {
-            if (s.getId() == id){
-                students.remove(s);
-            }
+    public Student removeStudent(int id) throws IdNotFoundException {
+        if (students.containsKey(id)){
+            return students.remove(id);
         }
-    }
-    public boolean removeStudent(Student student){
-        return students.remove(student);
+       throw new IdNotFoundException("No User Found, with ID: " + id);
     }
 
     @Override

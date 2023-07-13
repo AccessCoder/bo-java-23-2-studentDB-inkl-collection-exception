@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,54 +18,93 @@ class StudentDBTest {
     void getAllStudents() {
         //GIVEN
         StudentDB studentDB = new StudentDB(
-                new ArrayList<>(List.of(
+                new HashMap<>(Map.of(1,
                         new Student("a", 1)
                 ))
         );
-        List<Student> expected = new ArrayList<>(List.of(
-                new Student("a", 1)
+        Map<Integer,Student> expected = new HashMap<>(Map.of(
+                1,new Student("a", 1)
         ));
         //WHEN
-        List<Student> actual = studentDB.getAllStudents();
+        Map<Integer,Student> actual = studentDB.getAllStudents();
         //THEN
         assertEquals(expected, actual);
     }
 
     @Test
-    void removeStudent() {
+    void removeStudent() throws Exception {
         //GIVEN
         StudentDB studentDB = new StudentDB(
-                new ArrayList<>(List.of(
+                new HashMap<>(Map.of(1,
                         new Student("a", 1)
                 ))
         );
         //WHEN
-        boolean actual = studentDB.removeStudent(
-                new Student("a", 1));
+        Student actual = studentDB.removeStudent(1);
         //THEN
-        assertTrue(actual);
-        assertEquals(List.of(), studentDB.getAllStudents());
+        assertEquals(new Student("a", 1), actual);
+        assertEquals(Map.of(), studentDB.getAllStudents());
 
     }
 
     @Test
-    void addStudent() {
+    void removeStudent_ShouldThrowIdNotFoundException_WhenInvalidIdIsGiven(){
         //GIVEN
         StudentDB studentDB = new StudentDB(
-                new ArrayList<>(List.of(
+                new HashMap<>(Map.of(1,
+                        new Student("a", 1)
+                ))
+        );
+        //WHEN //THEN
+        try {
+            studentDB.removeStudent(7);
+            fail();
+        }catch (IdNotFoundException e){
+            assertTrue(true);
+        }
+
+
+    }
+
+    @Test
+    void addStudent() throws IdAlreadyExistsException {
+        //GIVEN
+        StudentDB studentDB = new StudentDB(
+                new HashMap<>(Map.of(1,
                         new Student("a", 1)
                 ))
         );
         Student student = new Student("B", 2);
-        List<Student> expected = new ArrayList<>(List.of(
+        Map<Integer,Student> expected = new HashMap<>(Map.of(1,
                 new Student("a", 1),
-                student
+                2, student
         ));
         //WHEN
-        boolean actual = studentDB.addStudent(student);
+        Student actual = studentDB.addStudent(student);
         //THEN
-        assertTrue(actual);
+        assertEquals(student,actual);
         assertEquals(expected, studentDB.getAllStudents());
+    }
+
+    @Test
+    void addStudent_ShouldThrowIdAlreadyExistsException_WhenIdIsAlreadyInTheMap() {
+        //GIVEN
+        StudentDB studentDB = new StudentDB(
+                new HashMap<>(Map.of(1,
+                        new Student("a", 1)
+                ))
+        );
+        Student student = new Student("B", 1);
+
+        //WHEN
+
+        try {
+            studentDB.addStudent(student);
+            fail();
+        } catch (IdAlreadyExistsException e) {
+            assertTrue(true);
+        }
+
     }
 
 
